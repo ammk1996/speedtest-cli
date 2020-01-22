@@ -28,6 +28,8 @@ import datetime
 import platform
 import threading
 import xml.parsers.expat
+from tkinter import *
+
 
 try:
     import gzip
@@ -1820,7 +1822,9 @@ def printer(string, quiet=False, debug=False, error=False, **kwargs):
 
 
 def shell():
+    root = Tk()
     """Run the full speedtest.net test"""
+
 
     global DEBUG
     shutdown_event = threading.Event()
@@ -1867,6 +1871,9 @@ def shell():
     else:
         callback = print_dots(shutdown_event)
 
+    myLabel1 = Label(root, text="Retrieving speedtest.net configuration...")
+    myLabel1.grid(row=0, column=0)
+
     printer('Retrieving speedtest.net configuration...', quiet)
     try:
         speedtest = Speedtest(
@@ -1875,6 +1882,8 @@ def shell():
             secure=args.secure
         )
     except (ConfigRetrievalError,) + HTTP_ERRORS:
+        myLabel2 = Label(root, text="Cannot retrieve speedtest configuration")
+        myLabel2.pack()
         printer('Cannot retrieve speedtest configuration', error=True)
         raise SpeedtestCLIError(get_exception())
 
@@ -1882,6 +1891,8 @@ def shell():
         try:
             speedtest.get_servers()
         except (ServersRetrievalError,) + HTTP_ERRORS:
+            myLabel3= Label(root, text="Cannot retrieve speedtest server list")
+            myLabel3.pack()
             printer('Cannot retrieve speedtest server list', error=True)
             raise SpeedtestCLIError(get_exception())
 
@@ -1896,11 +1907,14 @@ def shell():
                     if e.errno != errno.EPIPE:
                         raise
         sys.exit(0)
-
+    myLabel4= Label(root, text= 'Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'])
+    myLabel4.grid(row=1, column=0)
     printer('Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'],
             quiet)
 
     if not args.mini:
+        myLabel5= Label(root, text="Retrieving speedtest.net server list...")
+        myLabel5.grid(row=2, column=0)
         printer('Retrieving speedtest.net server list...', quiet)
         try:
             speedtest.get_servers(servers=args.server, exclude=args.exclude)
@@ -1921,23 +1935,32 @@ def shell():
         if args.server and len(args.server) == 1:
             printer('Retrieving information for the selected server...', quiet)
         else:
+            myLabel6= Label(root,text= "Selecting best server based on ping...")
+            myLabel6.grid(row=3, column=0)
             printer('Selecting best server based on ping...', quiet)
         speedtest.get_best_server()
     elif args.mini:
         speedtest.get_best_server(speedtest.set_mini_server(args.mini))
 
     results = speedtest.results
-
+    myLabel7= Label(root,text= 'Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: ' '%(latency)s ms' % results.server)
+    myLabel7.grid(row=4, column=0)
     printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
             '%(latency)s ms' % results.server, quiet)
 
     if args.download:
+        myLabel8= Label(root,text="Testing download speed...")
+        myLabel8.grid(row=5, column=0)
         printer('Testing download speed', quiet,
                 end=('', '\n')[bool(debug)])
         speedtest.download(
             callback=callback,
             threads=(None, 1)[args.single]
         )
+        myLabel9 = Label(root,text='Download: %0.2f M%s/s' %
+                ((results.download / 1000.0 / 1000.0) / args.units[1],
+                 args.units[0]))
+        myLabel9.grid(row=6, column=0)
         printer('Download: %0.2f M%s/s' %
                 ((results.download / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]),
@@ -1946,6 +1969,8 @@ def shell():
         printer('Skipping download test', quiet)
 
     if args.upload:
+        myLabel10 = Label(root,text= "Testing upload speed...")
+        myLabel10.grid(row=7, column=0)
         printer('Testing upload speed', quiet,
                 end=('', '\n')[bool(debug)])
         speedtest.upload(
@@ -1953,6 +1978,10 @@ def shell():
             pre_allocate=args.pre_allocate,
             threads=(None, 1)[args.single]
         )
+        myLabel11= Label(root, text= 'Upload: %0.2f M%s/s' %
+                ((results.upload / 1000.0 / 1000.0) / args.units[1],
+                 args.units[0]))
+        myLabel11.grid(row=8, column=0)
         printer('Upload: %0.2f M%s/s' %
                 ((results.upload / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]),
