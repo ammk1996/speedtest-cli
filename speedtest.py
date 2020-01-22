@@ -29,6 +29,7 @@ import platform
 import threading
 import xml.parsers.expat
 from tkinter import *
+import datetime
 
 
 try:
@@ -209,9 +210,7 @@ else:
 
     def print_(*args, **kwargs):
         """The new-style print function for Python 2.4 and 2.5.
-
         Taken from https://pypi.python.org/pypi/six/
-
         Modified to set encoding to UTF-8 always, and to flush after write
         """
         fp = kwargs.pop("file", sys.stdout)
@@ -369,7 +368,6 @@ class SpeedtestMissingBestServer(SpeedtestException):
 def create_connection(address, timeout=_GLOBAL_DEFAULT_TIMEOUT,
                       source_address=None):
     """Connect to *address* and return the socket object.
-
     Convenience function.  Connect to *address* (a 2-tuple ``(host,
     port)``) and return the socket object.  Passing the optional
     *timeout* parameter will set the timeout on the socket instance
@@ -378,7 +376,6 @@ def create_connection(address, timeout=_GLOBAL_DEFAULT_TIMEOUT,
     is used.  If *source_address* is set it must be a tuple of (host, port)
     for the socket to bind as a source address before making the connection.
     An host of '' or port 0 tells the OS to use the default.
-
     Largely vendored from Python 2.7, modified to work with Python 2.4
     """
 
@@ -511,7 +508,6 @@ if HTTPSConnection:
 def _build_connection(connection, source_address, timeout, context=None):
     """Cross Python 2.4 - Python 3 callable to build an ``HTTPConnection`` or
     ``HTTPSConnection`` with the args we need
-
     Called from ``http(s)_open`` methods of ``SpeedtestHTTPHandler`` or
     ``SpeedtestHTTPSHandler``
     """
@@ -612,7 +608,6 @@ def build_opener(source_address=None, timeout=10):
 class GzipDecodedResponse(GZIP_BASE):
     """A file-like object to decode a response encoded with the gzip
     method, as described in RFC 1952.
-
     Largely copied from ``xmlrpclib``/``xmlrpc.client`` and modified
     to work for py2.4-py3
     """
@@ -683,9 +678,7 @@ def build_user_agent():
 
 def build_request(url, data=None, headers=None, bump='0', secure=False):
     """Build a urllib2 request object
-
     This function automatically adds a User-Agent header to all requests
-
     """
 
     if not headers:
@@ -720,7 +713,6 @@ def build_request(url, data=None, headers=None, bump='0', secure=False):
 def catch_request(request, opener=None):
     """Helper function to catch common exceptions encountered when
     establishing a connection with a HTTP/HTTPS request
-
     """
 
     if opener:
@@ -741,7 +733,6 @@ def catch_request(request, opener=None):
 def get_response_stream(response):
     """Helper function to return either a Gzip reader if
     ``Content-Encoding`` is ``gzip`` otherwise the response itself
-
     """
 
     try:
@@ -758,7 +749,6 @@ def get_response_stream(response):
 def get_attributes_by_tag_name(dom, tag_name):
     """Retrieve an attribute from an XML document and return it in a
     consistent format
-
     Only used with xml.dom.minidom, which is likely only to be used
     with python versions older than 2.5
     """
@@ -923,12 +913,10 @@ class HTTPUploader(threading.Thread):
 
 class SpeedtestResults(object):
     """Class for holding the results of a speedtest, including:
-
     Download speed
     Upload speed
     Ping/Latency to test server
     Data about server that the test was run against
-
     Additionally this class can return a result data as a dictionary or CSV,
     as well as submit a POST of the result data to the speedtest.net API
     to get a share results image link.
@@ -1504,7 +1492,6 @@ class Speedtest(object):
 
     def download(self, callback=do_nothing, threads=None):
         """Test download speed against speedtest.net
-
         A ``threads`` value of ``None`` will fall back to those dictated
         by the speedtest.net configuration
         """
@@ -1579,7 +1566,6 @@ class Speedtest(object):
 
     def upload(self, callback=do_nothing, pre_allocate=True, threads=None):
         """Test upload speed against speedtest.net
-
         A ``threads`` value of ``None`` will fall back to those dictated
         by the speedtest.net configuration
         """
@@ -1785,7 +1771,6 @@ def parse_args():
 def validate_optional_args(args):
     """Check if an argument was provided that depends on a module that may
     not be part of the Python standard library.
-
     If such an argument is supplied, and the module does not exist, exit
     with an error stating which module is missing.
     """
@@ -1871,7 +1856,7 @@ def shell():
     else:
         callback = print_dots(shutdown_event)
 
-    myLabel1 = Label(root, text="Retrieving speedtest.net configuration...")
+    myLabel1 = Label(root, text="Retrieving speedtest.net configuration...", fg="blue")
     myLabel1.grid(row=0, column=0)
 
     printer('Retrieving speedtest.net configuration...', quiet)
@@ -1882,7 +1867,7 @@ def shell():
             secure=args.secure
         )
     except (ConfigRetrievalError,) + HTTP_ERRORS:
-        myLabel2 = Label(root, text="Cannot retrieve speedtest configuration")
+        myLabel2 = Label(root, text="Cannot retrieve speedtest configuration", fg="blue")
         myLabel2.pack()
         printer('Cannot retrieve speedtest configuration', error=True)
         raise SpeedtestCLIError(get_exception())
@@ -1891,7 +1876,7 @@ def shell():
         try:
             speedtest.get_servers()
         except (ServersRetrievalError,) + HTTP_ERRORS:
-            myLabel3= Label(root, text="Cannot retrieve speedtest server list")
+            myLabel3= Label(root, text="Cannot retrieve speedtest server list", fg="blue")
             myLabel3.pack()
             printer('Cannot retrieve speedtest server list', error=True)
             raise SpeedtestCLIError(get_exception())
@@ -1907,13 +1892,13 @@ def shell():
                     if e.errno != errno.EPIPE:
                         raise
         sys.exit(0)
-    myLabel4= Label(root, text= 'Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'])
+    myLabel4= Label(root, text= 'Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'], fg="blue")
     myLabel4.grid(row=1, column=0)
     printer('Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'],
             quiet)
 
     if not args.mini:
-        myLabel5= Label(root, text="Retrieving speedtest.net server list...")
+        myLabel5= Label(root, text="Retrieving speedtest.net server list...", fg="blue")
         myLabel5.grid(row=2, column=0)
         printer('Retrieving speedtest.net server list...', quiet)
         try:
@@ -1935,7 +1920,7 @@ def shell():
         if args.server and len(args.server) == 1:
             printer('Retrieving information for the selected server...', quiet)
         else:
-            myLabel6= Label(root,text= "Selecting best server based on ping...")
+            myLabel6= Label(root,text= "Selecting best server based on ping...", fg="blue")
             myLabel6.grid(row=3, column=0)
             printer('Selecting best server based on ping...', quiet)
         speedtest.get_best_server()
@@ -1943,13 +1928,13 @@ def shell():
         speedtest.get_best_server(speedtest.set_mini_server(args.mini))
 
     results = speedtest.results
-    myLabel7= Label(root,text= 'Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: ' '%(latency)s ms' % results.server)
+    myLabel7= Label(root,text= 'Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: ' '%(latency)s ms' % results.server, fg="blue")
     myLabel7.grid(row=4, column=0)
     printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
             '%(latency)s ms' % results.server, quiet)
 
     if args.download:
-        myLabel8= Label(root,text="Testing download speed...")
+        myLabel8= Label(root,text="Testing download speed...", fg="blue")
         myLabel8.grid(row=5, column=0)
         printer('Testing download speed', quiet,
                 end=('', '\n')[bool(debug)])
@@ -1959,7 +1944,7 @@ def shell():
         )
         myLabel9 = Label(root,text='Download: %0.2f M%s/s' %
                 ((results.download / 1000.0 / 1000.0) / args.units[1],
-                 args.units[0]))
+                 args.units[0]), fg="blue")
         myLabel9.grid(row=6, column=0)
         printer('Download: %0.2f M%s/s' %
                 ((results.download / 1000.0 / 1000.0) / args.units[1],
@@ -1969,7 +1954,7 @@ def shell():
         printer('Skipping download test', quiet)
 
     if args.upload:
-        myLabel10 = Label(root,text= "Testing upload speed...")
+        myLabel10 = Label(root,text= "Testing upload speed...", fg="blue")
         myLabel10.grid(row=7, column=0)
         printer('Testing upload speed', quiet,
                 end=('', '\n')[bool(debug)])
@@ -1980,7 +1965,7 @@ def shell():
         )
         myLabel11= Label(root, text= 'Upload: %0.2f M%s/s' %
                 ((results.upload / 1000.0 / 1000.0) / args.units[1],
-                 args.units[0]))
+                 args.units[0]), fg="blue")
         myLabel11.grid(row=8, column=0)
         printer('Upload: %0.2f M%s/s' %
                 ((results.upload / 1000.0 / 1000.0) / args.units[1],
@@ -2009,6 +1994,19 @@ def shell():
     if args.share and not machine_format:
         printer('Share results: %s' % results.share())
 
+    x = datetime.datetime.now()
+
+    f = open("result.txt", "a+")
+    f.write(str(x.day)+ "/" +str(x.month)+ "/" +str(x.year)+ " Server: " + '%(sponsor)s'% results.server + ","+" Download Speed: " + '%0.2f M%s/s' %
+                ((results.download / 1000.0 / 1000.0) / args.units[1],
+                 args.units[0]) + " Upload Speed: " + '%0.2f M%s/s' %
+                ((results.upload / 1000.0 / 1000.0) / args.units[1],
+                 args.units[0]) + " Ping: " + '%(latency)s ms' % results.server +"\n")
+
+    printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
+            '%(latency)s ms' % results.server, quiet)
+    
+
 
 def main():
     try:
@@ -2023,7 +2021,9 @@ def main():
             if not msg:
                 msg = '%r' % e
             raise SystemExit('ERROR: %s' % msg)
+        
 
 
 if __name__ == '__main__':
     main()
+
