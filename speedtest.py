@@ -1813,10 +1813,26 @@ def startup():
 
     myLabel0 = Label(root, text="Welcome to SpeedTestGUI", fg="blue",font=('arial',20,'bold'),padx=20,pady=20)
     myLabel0.grid(row=0,column=0)
-    button1 = Button( text="Start Speed Test",bg='teal',fg='white',command=main,padx=20,pady=10)
+    button1 = Button( text="Start Speed Test",bg='teal',fg='white',command=startingspeedtest,padx=20,pady=10)
     button1.grid(row=1,column=0)
     myLabel13 = Label(root, text="                              ",padx=10,pady=10)
     myLabel13.grid(row=2,column=0)
+import time
+def startingspeedtest():
+    time.sleep(1)
+    myLabel16 = Label( text="Starting SpeedtestGUI...",fg="blue",font=('arial',17,'bold'),padx=10,pady=10)
+    myLabel16.grid(row=3,column=0)
+    time.sleep(2)
+    main()
+    
+from tkinter import messagebox
+def speedtestfinish():
+    finish = messagebox.askyesno("Successfully Tested", "Speed test is successful, Results are automitically saved with a text format in speedtest.py directory. Would you like to test again?")
+    if finish == 1:
+        main()
+    else:
+        return
+    
 def shell():
 
     """Run the full speedtest.net test"""
@@ -1868,9 +1884,9 @@ def shell():
         callback = print_dots(shutdown_event)
 
     myLabel1 = Label(root, text="Retrieving speedtest.net configuration...", fg="blue",anchor="w")
-    myLabel1.grid(row=3, column=0)
+    myLabel1.grid(row=4, column=0)
 
-    printer('Retrieving speedtest.net configuration...', quiet)
+
     try:
         speedtest = Speedtest(
             source_address=args.source,
@@ -1879,7 +1895,7 @@ def shell():
         )
     except (ConfigRetrievalError,) + HTTP_ERRORS:
         myLabel2 = Label(root, text="Cannot retrieve speedtest configuration", fg="blue")
-        myLabel2.pack()
+        myLabel2.grid()
         printer('Cannot retrieve speedtest configuration', error=True)
         raise SpeedtestCLIError(get_exception())
 
@@ -1904,14 +1920,12 @@ def shell():
                         raise
         sys.exit(0)
     myLabel4= Label(root, text= 'Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'], fg="blue")
-    myLabel4.grid(row=4, column=0)
-    printer('Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'],
-            quiet)
+    myLabel4.grid(row=5, column=0)
+
 
     if not args.mini:
         myLabel5= Label(root, text="Retrieving speedtest.net server list...", fg="blue")
-        myLabel5.grid(row=5, column=0)
-        printer('Retrieving speedtest.net server list...', quiet)
+        myLabel5.grid(row=6, column=0)
         try:
             speedtest.get_servers(servers=args.server, exclude=args.exclude)
         except NoMatchedServers:
@@ -1929,26 +1943,23 @@ def shell():
             )
 
         if args.server and len(args.server) == 1:
-            printer('Retrieving information for the selected server...', quiet)
+            myLabel17= Label(root,text= "Retrieving information for the selected server...",fb="blue")
+            myLabel17.grid(row=7, column=0)
         else:
             myLabel6= Label(root,text= "Selecting best server based on ping...", fg="blue")
-            myLabel6.grid(row=6, column=0)
-            printer('Selecting best server based on ping...', quiet)
+            myLabel6.grid(row=8, column=0)
         speedtest.get_best_server()
     elif args.mini:
         speedtest.get_best_server(speedtest.set_mini_server(args.mini))
 
     results = speedtest.results
     myLabel7= Label(root,text= 'Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: ' '%(latency)s ms' % results.server, fg="blue")
-    myLabel7.grid(row=7, column=0)
-    printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
-            '%(latency)s ms' % results.server, quiet)
+    myLabel7.grid(row=9, column=0)
 
     if args.download:
         myLabel8= Label(root,text="Testing download speed...", fg="blue")
-        myLabel8.grid(row=8, column=0)
-        printer('Testing download speed', quiet,
-                end=('', '\n')[bool(debug)])
+        myLabel8.grid(row=10, column=0)
+
         speedtest.download(
             callback=callback,
             threads=(None, 1)[args.single]
@@ -1956,19 +1967,15 @@ def shell():
         myLabel9 = Label(root,text='Download: %0.2f M%s/s' %
                 ((results.download / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]), fg="blue")
-        myLabel9.grid(row=9, column=0)
-        printer('Download: %0.2f M%s/s' %
-                ((results.download / 1000.0 / 1000.0) / args.units[1],
-                 args.units[0]),
-                quiet)
+        myLabel9.grid(row=11, column=0)
+
     else:
         printer('Skipping download test', quiet)
 
     if args.upload:
         myLabel10 = Label(root,text= "Testing upload speed...", fg="blue")
-        myLabel10.grid(row=10, column=0)
-        printer('Testing upload speed', quiet,
-                end=('', '\n')[bool(debug)])
+        myLabel10.grid(row=12, column=0)
+
         speedtest.upload(
             callback=callback,
             pre_allocate=args.pre_allocate,
@@ -1977,11 +1984,8 @@ def shell():
         myLabel11= Label(root, text= 'Upload: %0.2f M%s/s' %
                 ((results.upload / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]), fg="blue")
-        myLabel11.grid(row=11, column=0)
-        printer('Upload: %0.2f M%s/s' %
-                ((results.upload / 1000.0 / 1000.0) / args.units[1],
-                 args.units[0]),
-                quiet)
+        myLabel11.grid(row=13, column=0)
+
 
 
     else:
@@ -2007,7 +2011,7 @@ def shell():
     if args.share and not machine_format:
         printer('Share results: %s' % results.share())
     myLabel14 = Label(root, text="                              ",padx=10,pady=10)
-    myLabel14.grid(row=12,column=0)
+    myLabel14.grid(row=14,column=0)
 
 
 
@@ -2021,16 +2025,17 @@ def shell():
                 ((results.upload / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]) + " Ping: " + '%(latency)s ms' % results.server +"\n")
 
-    printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
-            '%(latency)s ms' % results.server, quiet)
+
+
+    
 
     #button2 = Button( text="Test Again",bg='teal',fg='white',command=main,padx=20,pady=10)
     #button2.grid(row=13,column=0)
 
-    #myLabel15 = Label(root, text="                              ",padx=10,pady=10)
-    #myLabel15.grid(row=14,column=0)
+    myLabel15 = Label(root, text="Thank you for using SpeedtestGUI. This is an OpenSource Program which is modified & developed by AungMyintMyatt.",fg="black",padx=10,pady=10)
+    myLabel15.grid(row=15,column=0)
 
-
+    speedtestfinish()
 
 
 
