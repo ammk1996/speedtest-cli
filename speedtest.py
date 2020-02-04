@@ -1818,13 +1818,24 @@ def startup():
     myLabel13 = Label(root, text="                              ",padx=10,pady=10)
     myLabel13.grid(row=2,column=0)
 import time
-def startingspeedtest():
-    myLabel16 = Label( text="Starting SpeedtestGUI...",fg="green",font=('arial',17,'bold'),padx=10,pady=10)
-    myLabel16.grid(row=3,column=0)
-    
-    main()
+
     
 from tkinter import messagebox
+
+def startingspeedtest():
+    myLabel16 = Label( text="Initiating SpeedtestGUI....",fg="green",font=('arial',17,'bold'),padx=10,pady=10)
+    myLabel16.grid(row=3,column=0)
+    root.update_idletasks()
+    root.update()
+    
+    time.sleep(1)
+    
+    myLabel16.grid_forget()
+    root.update_idletasks()
+    root.update()
+    
+    main()
+
 
     
 def shell():
@@ -2058,9 +2069,13 @@ def shell():
     root.update_idletasks()
     root.update()
 
+
+
     def speedtestfinish():
             finish = messagebox.askyesno("Successfully Tested", "Speed test is successful, Results are automitically saved with a text format in speedtest.py directory. Would you like to test again?")
             if finish == 1:
+
+                
                 myLabel1.grid_forget()
                 root.update_idletasks()
                 root.update()
@@ -2099,8 +2114,9 @@ def shell():
                 
                 myLabel14.grid_forget()
                 root.update_idletasks()
-                root.update()                
-    
+                root.update()
+                
+                time.sleep(0.8)
     
                 startingspeedtest()
             else:
