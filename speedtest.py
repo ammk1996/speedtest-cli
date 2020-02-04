@@ -1819,10 +1819,9 @@ def startup():
     myLabel13.grid(row=2,column=0)
 import time
 def startingspeedtest():
-    time.sleep(1)
-    myLabel16 = Label( text="Starting SpeedtestGUI...",fg="blue",font=('arial',17,'bold'),padx=10,pady=10)
+    myLabel16 = Label( text="Starting SpeedtestGUI...",fg="green",font=('arial',17,'bold'),padx=10,pady=10)
     myLabel16.grid(row=3,column=0)
-    time.sleep(2)
+    
     main()
     
 from tkinter import messagebox
@@ -1886,6 +1885,9 @@ def shell():
     myLabel1 = Label(root, text="Retrieving speedtest.net configuration...", fg="blue",anchor="w")
     myLabel1.grid(row=4, column=0)
 
+    root.update_idletasks()
+    root.update()
+
 
     try:
         speedtest = Speedtest(
@@ -1896,6 +1898,8 @@ def shell():
     except (ConfigRetrievalError,) + HTTP_ERRORS:
         myLabel2 = Label(root, text="Cannot retrieve speedtest configuration", fg="blue")
         myLabel2.grid()
+        root.update_idletasks()
+        root.update()
         printer('Cannot retrieve speedtest configuration', error=True)
         raise SpeedtestCLIError(get_exception())
 
@@ -1905,6 +1909,8 @@ def shell():
         except (ServersRetrievalError,) + HTTP_ERRORS:
             myLabel3= Label(root, text="Cannot retrieve speedtest server list", fg="blue")
             myLabel3.pack()
+            root.update_idletasks()
+            root.update()
             printer('Cannot retrieve speedtest server list', error=True)
             raise SpeedtestCLIError(get_exception())
 
@@ -1921,11 +1927,15 @@ def shell():
         sys.exit(0)
     myLabel4= Label(root, text= 'Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'], fg="blue")
     myLabel4.grid(row=5, column=0)
+    root.update_idletasks()
+    root.update()
 
 
     if not args.mini:
         myLabel5= Label(root, text="Retrieving speedtest.net server list...", fg="blue")
         myLabel5.grid(row=6, column=0)
+        root.update_idletasks()
+        root.update()
         try:
             speedtest.get_servers(servers=args.server, exclude=args.exclude)
         except NoMatchedServers:
@@ -1945,9 +1955,13 @@ def shell():
         if args.server and len(args.server) == 1:
             myLabel17= Label(root,text= "Retrieving information for the selected server...",fb="blue")
             myLabel17.grid(row=7, column=0)
+            root.update_idletasks()
+            root.update()
         else:
             myLabel6= Label(root,text= "Selecting best server based on ping...", fg="blue")
             myLabel6.grid(row=8, column=0)
+            root.update_idletasks()
+            root.update()
         speedtest.get_best_server()
     elif args.mini:
         speedtest.get_best_server(speedtest.set_mini_server(args.mini))
@@ -1955,10 +1969,14 @@ def shell():
     results = speedtest.results
     myLabel7= Label(root,text= 'Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: ' '%(latency)s ms' % results.server, fg="blue")
     myLabel7.grid(row=9, column=0)
+    root.update_idletasks()
+    root.update()
 
     if args.download:
         myLabel8= Label(root,text="Testing download speed...", fg="blue")
         myLabel8.grid(row=10, column=0)
+        root.update_idletasks()
+        root.update()
 
         speedtest.download(
             callback=callback,
@@ -1968,6 +1986,8 @@ def shell():
                 ((results.download / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]), fg="blue")
         myLabel9.grid(row=11, column=0)
+        root.update_idletasks()
+        root.update()
 
     else:
         printer('Skipping download test', quiet)
@@ -1975,6 +1995,8 @@ def shell():
     if args.upload:
         myLabel10 = Label(root,text= "Testing upload speed...", fg="blue")
         myLabel10.grid(row=12, column=0)
+        root.update_idletasks()
+        root.update()
 
         speedtest.upload(
             callback=callback,
@@ -1985,6 +2007,8 @@ def shell():
                 ((results.upload / 1000.0 / 1000.0) / args.units[1],
                  args.units[0]), fg="blue")
         myLabel11.grid(row=13, column=0)
+        root.update_idletasks()
+        root.update()
 
 
 
@@ -2012,6 +2036,8 @@ def shell():
         printer('Share results: %s' % results.share())
     myLabel14 = Label(root, text="                              ",padx=10,pady=10)
     myLabel14.grid(row=14,column=0)
+    root.update_idletasks()
+    root.update()
 
 
 
@@ -2034,6 +2060,8 @@ def shell():
 
     myLabel15 = Label(root, text="Thank you for using SpeedtestGUI. This is an OpenSource Program which is modified & developed by AungMyintMyatt.",fg="black",padx=10,pady=10)
     myLabel15.grid(row=15,column=0)
+    root.update_idletasks()
+    root.update()
 
     speedtestfinish()
 
