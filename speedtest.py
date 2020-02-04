@@ -1825,12 +1825,7 @@ def startingspeedtest():
     main()
     
 from tkinter import messagebox
-def speedtestfinish():
-    finish = messagebox.askyesno("Successfully Tested", "Speed test is successful, Results are automitically saved with a text format in speedtest.py directory. Would you like to test again?")
-    if finish == 1:
-        main()
-    else:
-        return
+
     
 def shell():
 
@@ -2063,7 +2058,57 @@ def shell():
     root.update_idletasks()
     root.update()
 
+    def speedtestfinish():
+            finish = messagebox.askyesno("Successfully Tested", "Speed test is successful, Results are automitically saved with a text format in speedtest.py directory. Would you like to test again?")
+            if finish == 1:
+                myLabel1.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel4.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel6.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel5.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel7.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel8.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel9.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel10.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel11.grid_forget()
+                root.update_idletasks()
+                root.update()
+                
+                myLabel14.grid_forget()
+                root.update_idletasks()
+                root.update()                
+    
+    
+                startingspeedtest()
+            else:
+                return
+
+
     speedtestfinish()
+
 
 
 
