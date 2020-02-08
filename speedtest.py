@@ -2072,7 +2072,7 @@ def shell():
 
 
     def speedtestfinish():
-            finish = messagebox.askyesno("Successfully Tested", "Speed test is successful, Results are automitically saved with a text format in speedtest.py directory. Would you like to test again?")
+            finish = messagebox.askyesno("Successfully Tested", "Speed test is successful, Results are automatically saved with a text format in speedtest.py directory. Would you like to test again?")
             if finish == 1:
 
                 
