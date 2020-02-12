@@ -1906,7 +1906,6 @@ def shell():
         myLabel2.grid()
         root.update_idletasks()
         root.update()
-        printer('Cannot retrieve speedtest configuration', error=True)
         raise SpeedtestCLIError(get_exception())
 
     if args.list:
